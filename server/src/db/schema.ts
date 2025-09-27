@@ -7,8 +7,8 @@ const timestamps = {
   updatedAt: t.timestamp("updated_at"),
 };
 
-const userRoleEnum = t.pgEnum("user_role", ["user", "admin"]);
-const messageRoleEnum = t.pgEnum("message_role", ["user", "assistant"]);
+export const userRoleEnum = t.pgEnum("user_role", ["user", "admin"]);
+export const messageRoleEnum = t.pgEnum("message_role", ["user", "assistant"]);
 
 export const users = table(
   "users",
@@ -22,7 +22,7 @@ export const users = table(
     profilePictureUrl: t.text("profile_picture_url"),
     premium: t.boolean("premium").notNull().default(false),
     tokensUsed: t.integer("tokens_used").notNull().default(0),
-    role: userRoleEnum("role"),
+    role: userRoleEnum(),
     selectedModel: t.text("selected_model"),
 
     ...timestamps,
@@ -46,7 +46,7 @@ export const threads = table(
     ...timestamps,
   },
   (table) => ({
-    userIndex: t.uniqueIndex("user_ids").on(table.userId),
+    userIndex: t.index("user_ids").on(table.userId),
     isDeletedIndex: t.index("is_deleted_idx").on(table.isDeleted),
   })
 );
@@ -59,7 +59,7 @@ export const messages = table(
       .primaryKey()
       .default(sql`gen_random_uuid()`),
     threadId: t.text("thread_id").references(() => threads.id),
-    role: messageRoleEnum("role"),
+    role: messageRoleEnum(),
     parts: t.json("parts").$type<
       {
         type: "text";
