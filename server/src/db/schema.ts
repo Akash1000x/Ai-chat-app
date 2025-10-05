@@ -1,5 +1,5 @@
-import { sql } from "drizzle-orm";
-import { pgTable as table, PgArray } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { pgTable as table } from "drizzle-orm/pg-core";
 import * as t from "drizzle-orm/pg-core";
 
 const timestamps = {
@@ -51,6 +51,7 @@ export const threads = table(
   })
 );
 
+//TODO: should I need to add userId to the messages table?
 export const messages = table(
   "messages",
   {
@@ -63,7 +64,7 @@ export const messages = table(
     parts: t.json("parts").$type<
       {
         type: "text";
-        text: String;
+        text: string;
       }[]
     >(),
 
@@ -86,16 +87,18 @@ export const usage = table("usage", {
   ...timestamps,
 });
 
-export const modelCategorie = table("model_categorie", {
+export const modelCategories = table("model_categories", {
   id: t
     .text("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   name: t.text("name").notNull(),
-  logoUrl: t.text("logo_url"),
+  apiKey: t.text("api_key").notNull(),
+  baseUrl: t.text("base_url"),
 
   ...timestamps,
 });
+
 
 export const models = table("models", {
   id: t
@@ -103,13 +106,22 @@ export const models = table("models", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   name: t.text("name").notNull(),
-  baseUrl: t.text("base_url").notNull(),
-  apiKey: t.text("api_key").notNull(),
   isDefault: t.boolean("is_default").notNull().default(false),
   isActive: t.boolean("is_active").notNull().default(true),
-  imageUrl: t.text("image_url"),
   isPremium: t.boolean("is_premium").notNull().default(true),
-  category: t.text("category").references(() => modelCategorie.id),
+  categoryId: t.text("category_id").references(() => modelCategories.id),
 
   ...timestamps,
 });
+
+
+export const modelCategoriesRelations = relations(modelCategories, ({ many }) => ({
+  models: many(models)
+}))
+
+export const modelsRelations = relations(models, ({ one }) => ({
+  category: one(modelCategories, {
+    fields: [models.categoryId],
+    references: [modelCategories.id]
+  })
+}))
