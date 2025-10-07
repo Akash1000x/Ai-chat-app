@@ -16,7 +16,7 @@ const Title = ({ as: Comp = 'p', className, ...props }: SharedProps) => {
 }
 
 const Body = ({ as: Comp = 'p', className, ...props }: SharedProps) => {
-  return <Comp className={cn('text-base', className)} {...props} />
+  return <Comp className={cn('lg:text-base text-sm', className)} {...props} />
 }
 
 export { Title, Body, HeadLine }
