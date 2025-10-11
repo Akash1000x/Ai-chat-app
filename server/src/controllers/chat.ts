@@ -1,0 +1,92 @@
+import OpenAI from "openai";
+import { type NextFunction, type Request, type Response } from "express";
+import { messages as messagesTable, models, threads } from "../db/schema.js";
+import { db } from "../db/index.js";
+import { BadRequestError, InternalRequestError } from "@/utils/errors.js";
+
+const client = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPEN_ROUTER_API_KEY,
+});
+
+interface RequestBody {
+  model: (typeof models.$inferSelect);
+  preferences: string;
+  messages: (typeof messagesTable.$inferSelect)[];
+  threadId: string;
+  prompt: string;
+}
+
+const systemPrompt = (preferences: string) => {
+  return `
+You are a helpful assistant that can answer the questions of the user.
+
+User Preferences:
+  - ${preferences}
+`;
+};
+
+export const streamData = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    let { model, preferences, messages, threadId, prompt }: RequestBody = req.body;
+
+    if (!threadId) {
+      return next(new BadRequestError({ name: "BadRequestError", message: "Thread 'id' is required" }));
+    }
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const messagesData: { role: "user" | "assistant"; content: string }[] = messages.map((message) => {
+      return {
+        role: message.role as "user" | "assistant",
+        // content: message.parts?.map((part) => part.text).join("\n") ?? "",
+        content: message.parts ? message.parts[0]?.text ?? "" : "",
+      };
+    });
+    messagesData.push({
+      role: "user",
+      content: prompt,
+    });
+
+
+    const resStream = await client.chat.completions.create({
+      model: model.slug,
+      messages: [
+        { role: "system", content: systemPrompt(preferences) },
+        ...messagesData,
+      ],
+      stream: true,
+    });
+
+    let fullMessage = "";
+    for await (const chunk of resStream) {
+      const chunkData = chunk.choices[0]?.delta.content || "";
+      if (!!chunkData) {
+        fullMessage += chunkData;
+        const data = { type: "text", message: chunkData, time: new Date().toISOString() };
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+      }
+    }
+    res.write("[DONE]\n\n");
+    res.end();
+
+    await db.insert(messagesTable).values({
+      threadId,
+      model: model.slug,
+      role: "user",
+      parts: [{ type: "text", text: messagesData[messagesData.length - 1]?.content ?? "" }],
+    });
+    await db.insert(messagesTable).values({
+      threadId,
+      model: model.slug,
+      role: "assistant",
+      parts: [{ type: "text", text: fullMessage }],
+    });
+  } catch (error) {
+    console.log("streamData error", error);
+
+    return next(new InternalRequestError({ message: "Internal server error", name: "InternalRequestError" }));
+  }
+};
