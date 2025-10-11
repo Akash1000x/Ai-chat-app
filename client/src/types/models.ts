@@ -1,12 +1,14 @@
 export type ModelsCategory = {
   id: string,
   name: string,
-  models: Models[]
+  models: Model[],
+  slug: string
 }
 
-export type Models = {
+export type Model = {
   id: string,
   name: string,
+  slug: string,
   isActive: boolean,
   isPremium: boolean,
   isDefault: boolean,
