@@ -51,7 +51,7 @@ export default function AppSidebar() {
         data-state={state}
         className={cn("absolute top-1.5 left-1.5 z-50 group")}
       >
-        <div className="flex items-center transition-all group-data-[state=collapsed]:delay-300 group-data-[state=expanded]:delay-0 group-data-[state=collapsed]:border rounded-sm p-1">
+        <div className="flex items-center transition-all group-data-[state=collapsed]:delay-300 group-data-[state=expanded]:delay-0 group-data-[state=collapsed]:border rounded-md p-1">
           <SidebarTrigger />
           <Button
             variant={"ghost"}
@@ -84,11 +84,7 @@ export default function AppSidebar() {
               <Search />
             </Button>
           </div>
-          <Button
-            variant={"outline"}
-            className="py-5 text-lg font-semibold"
-            asChild
-          >
+          <Button className="py-5 text-lg font-semibold" asChild>
             <Link to="/">
               New Chat <Plus />
             </Link>
