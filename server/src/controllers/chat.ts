@@ -3,10 +3,16 @@ import { type NextFunction, type Request, type Response } from "express";
 import { messages as messagesTable, models, threads } from "../db/schema.js";
 import { db } from "../db/index.js";
 import { BadRequestError, InternalRequestError } from "@/utils/errors.js";
+import { eq } from "drizzle-orm";
 
 const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPEN_ROUTER_API_KEY,
+});
+
+const geminiClient = new OpenAI({
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+  apiKey: process.env.GOOGLE_API_KEY,
 });
 
 interface RequestBody {
@@ -15,6 +21,7 @@ interface RequestBody {
   messages: (typeof messagesTable.$inferSelect)[];
   threadId: string;
   prompt: string;
+  newConversation: boolean;
 }
 
 const systemPrompt = (preferences: string) => {
@@ -26,12 +33,31 @@ User Preferences:
 `;
 };
 
+const SystemPromptToGetTitle = `
+  You are a helpful assistant that can give a short title for the user's question.
+  ONLY give the title, no other text. NO COMMENTS, NO CONFIRMATION, NO EXPLANATION, NO THANK YOU, NO NOTHING.
+`
+
 export const streamData = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let { model, preferences, messages, threadId, prompt }: RequestBody = req.body;
+    let { model, preferences, messages, threadId, prompt, newConversation }: RequestBody = req.body;
 
     if (!threadId) {
       return next(new BadRequestError({ name: "BadRequestError", message: "Thread 'id' is required" }));
+    }
+
+    if (newConversation) {
+      const res = await geminiClient.chat.completions.create({
+        model: "gemini-2.0-flash",
+        messages: [
+          { role: "system", content: SystemPromptToGetTitle },
+          { role: "user", content: prompt },
+        ],
+        stream: false,
+      })
+      await db.update(threads).set({
+        title: res.choices[0]?.message?.content,
+      }).where(eq(threads.id, threadId));
     }
 
     res.setHeader("Content-Type", "text/event-stream");
@@ -41,7 +67,6 @@ export const streamData = async (req: Request, res: Response, next: NextFunction
     const messagesData: { role: "user" | "assistant"; content: string }[] = messages.map((message) => {
       return {
         role: message.role as "user" | "assistant",
-        // content: message.parts?.map((part) => part.text).join("\n") ?? "",
         content: message.parts ? message.parts[0]?.text ?? "" : "",
       };
     });
@@ -63,6 +88,7 @@ export const streamData = async (req: Request, res: Response, next: NextFunction
     let fullMessage = "";
     for await (const chunk of resStream) {
       const chunkData = chunk.choices[0]?.delta.content || "";
+      // chunk.usage && console.log("chunk.usage", chunk.usage);
       if (!!chunkData) {
         fullMessage += chunkData;
         const data = { type: "text", message: chunkData, time: new Date().toISOString() };
@@ -84,8 +110,8 @@ export const streamData = async (req: Request, res: Response, next: NextFunction
       role: "assistant",
       parts: [{ type: "text", text: fullMessage }],
     });
-  } catch (error) {
-    console.log("streamData error", error);
+  } catch (error: any) {
+    console.log("streamData error", error.message);
 
     return next(new InternalRequestError({ message: "Internal server error", name: "InternalRequestError" }));
   }
