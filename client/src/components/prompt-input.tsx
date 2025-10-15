@@ -11,8 +11,12 @@ import useLocalStorage from "@/hooks/use-local-storage"
 
 export default function PromptInput({
   onSubmit,
+  message,
+  setMessage,
 }: {
   onSubmit: (data: any) => void
+  message: string
+  setMessage: (message: string) => void
 }) {
   const { data: models } = useGetModels()
   const [userSelectedModel, setUserSelectedModel] = useLocalStorage(
@@ -21,7 +25,6 @@ export default function PromptInput({
   )
   const [selectedModel, setSelectedModel] = React.useState<Model | null>(null)
   const [openPopover, setOpenPopover] = React.useState<boolean>(false)
-  const [message, setMessage] = React.useState<string>("")
 
   const handleSubmit = () => {
     if (!message.trim() || !selectedModel) return
@@ -63,7 +66,7 @@ export default function PromptInput({
   }
 
   return (
-    <div className="lg:w-3xl w-xl absolute bottom-0 left-1/2 -translate-x-1/2 border rounded-t-lg bg-input z-20 pt-3">
+    <div className="lg:w-3xl w-xl absolute bottom-0 left-1/2 -translate-x-1/2 border rounded-t-lg bg-input  z-20 pt-3">
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -75,9 +78,11 @@ export default function PromptInput({
           placeholder="Type your message here..."
           name="input"
           value={message}
-          onChange={(e) =>
-            e.target.value !== "\n" && setMessage(e.target.value)
-          }
+          onChange={(e) => {
+            if (e.target.value !== "\n") {
+              setMessage(e.target.value);
+            }
+          }}
           onKeyDown={handleKeyDown}
         />
         <div className="flex items-center justify-between p-2">
@@ -85,7 +90,7 @@ export default function PromptInput({
             open={openPopover}
             setOpen={setOpenPopover}
             trigger={
-              <Button variant={"outline"} className="capitalize">
+              <Button variant={"ghost"} className="capitalize">
                 {selectedModel?.name} <ChevronDown />
               </Button>
             }
@@ -111,7 +116,6 @@ export default function PromptInput({
             </div>
           </CustomPopover>
           <Button
-            variant="outline"
             size={"icon"}
             type="submit"
             aria-label="Send message"

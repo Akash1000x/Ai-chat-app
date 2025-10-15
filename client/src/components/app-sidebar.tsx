@@ -92,7 +92,7 @@ export default function AppSidebar() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Chats</SidebarGroupLabel>
+            {data && <SidebarGroupLabel>Chats</SidebarGroupLabel>}
             <SidebarGroupContent>
               <SidebarMenu>
                 {data?.map((item: ThreadType, i: number) => (

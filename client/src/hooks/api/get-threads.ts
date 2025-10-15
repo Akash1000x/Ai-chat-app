@@ -7,9 +7,10 @@ const fetchThreads = async (offset: number): Promise<ThreadType[]> => {
   return data.data;
 }
 
-export const useGetThreads = (offset: number) => {
+export const useGetThreads = (offset: number, userId: string) => {
   return useQuery<ThreadType[], Error>({
     queryKey: ["threads", offset],
     queryFn: () => fetchThreads(offset),
+    enabled: !!userId,
   })
 }
