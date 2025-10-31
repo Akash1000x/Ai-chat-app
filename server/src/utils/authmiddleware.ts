@@ -7,7 +7,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
     });
-    console.log("authMiddleware session", session);
     if (!session?.user) {
       return res.status(401).json({ error: "Unauthorized" });
     }
