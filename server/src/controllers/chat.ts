@@ -111,7 +111,25 @@ export const streamData = async (req: Request, res: Response, next: NextFunction
       parts: [{ type: "text", text: fullMessage }],
     });
   } catch (error: any) {
-    console.log("streamData error", error.message);
+    console.log("streamData error:", error);
+
+    if (error?.status === 400) {
+      return next(new BadRequestError({ message: error?.message || "Bad Request (invalid or missing params, CORS)", name: "BadRequestError" }));
+    } else if (error?.status === 401) {
+      return next(new BadRequestError({ message: error?.message || "Invalid credentials (OAuth session expired, disabled/invalid API key)", name: "BadRequestError" }));
+    } else if (error?.status === 402) {
+      return next(new BadRequestError({ message: error?.message || "Your account or API key has insufficient credits.", name: "BadRequestError" }));
+    } else if (error?.status === 403) {
+      return next(new BadRequestError({ message: error?.message || "Your chosen model requires moderation and your input was flagged", name: "BadRequestError" }));
+    } else if (error?.status === 408) {
+      return next(new BadRequestError({ message: "Your request timed out", name: "BadRequestError" }));
+    } else if (error?.status === 429) {
+      return next(new BadRequestError({ message: "You are being rate limited", name: "BadRequestError" }));
+    } else if (error?.status === 502) {
+      return next(new BadRequestError({ message: "Your chosen model is down or we received an invalid response from it", name: "BadRequestError" }));
+    } else if (error?.status === 503) {
+      return next(new BadRequestError({ message: "There is no available model provider that meets your routing requirements", name: "BadRequestError" }));
+    }
 
     return next(new InternalRequestError({ message: "Internal server error", name: "InternalRequestError" }));
   }
