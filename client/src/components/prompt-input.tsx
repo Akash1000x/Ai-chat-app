@@ -80,7 +80,7 @@ export default function PromptInput({
           value={message}
           onChange={(e) => {
             if (e.target.value !== "\n") {
-              setMessage(e.target.value);
+              setMessage(e.target.value)
             }
           }}
           onKeyDown={handleKeyDown}
@@ -94,8 +94,9 @@ export default function PromptInput({
                 {selectedModel?.name} <ChevronDown />
               </Button>
             }
+            className="py-2"
           >
-            <div className="space-y-4">
+            <div className="space-y-2">
               {models?.map((category) => (
                 <div key={category.id} className="">
                   {!!category.models.length && (
@@ -141,9 +142,10 @@ const ListItem = React.memo(
   }) => {
     return (
       <Button
-        variant="ghost"
+        variant="outline"
+        size="sm"
         key={model.id}
-        className="flex gap-4 w-full justify-start cursor-pointer [&>svg]:size-5"
+        className="flex gap-4 w-full justify-start cursor-pointer [&>svg]:size-5 mb-1 last:mb-0"
         onClick={onClick}
       >
         {icons[categoryName as keyof typeof icons]}

@@ -2,7 +2,7 @@ import Markdown from "@/components/markdown"
 import PromptInput from "@/components/prompt-input"
 import { Body } from "@/components/ui/typography"
 import { useGetMessage } from "@/hooks/api/get-messages"
-import { useClipboard } from "@/hooks/useClipboard"
+import useClipboard from "@/hooks/use-clipboard"
 import type { MessageType } from "@/types/messages"
 import type { Model } from "@/types/models"
 import React, { useEffect } from "react"
@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from "@tanstack/react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import { Skeleton } from "./ui/skeleton"
 import SuggestionQueue from "./ui/suggestion-que"
+import { toast } from "sonner"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -110,6 +111,9 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
       if (!res.body) {
         throw new Error("Stream is not working")
       }
+      if (res.status !== 200) {
+        throw new Error(res.statusText)
+      }
       const reader = res.body.pipeThrough(new TextDecoderStream()).getReader()
 
       let fullResponse = ""
@@ -164,8 +168,9 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
         })
         queryClient.invalidateQueries({ queryKey: ["threads"] })
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
+      toast.error(error?.message || "Something went wrong")
     } finally {
       setWaitingForAiResponse(false)
     }

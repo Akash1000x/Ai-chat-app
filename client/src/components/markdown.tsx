@@ -7,7 +7,7 @@ import {
 import remarkGfm from "remark-gfm"
 import rehypeRaw from "rehype-raw"
 import { ScrollArea, ScrollBar } from "./ui/scroll-area"
-import { useClipboard } from "@/hooks/useClipboard"
+import useClipboard from "@/hooks/use-clipboard"
 import { Label } from "./ui/label"
 import { useTheme } from "./theme-provider"
 import CopyToClipboard from "./copy-to-clipboard"
@@ -43,8 +43,8 @@ export function CodeBlock({
   props,
 }: {
   props: React.ClassAttributes<HTMLElement> &
-    React.HTMLAttributes<HTMLElement> &
-    ExtraProps
+  React.HTMLAttributes<HTMLElement> &
+  ExtraProps
 }) {
   const { copied, handleCopy } = useClipboard()
   const { theme } = useTheme()

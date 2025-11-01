@@ -23,10 +23,8 @@ import {
   useParams,
 } from "@tanstack/react-router"
 import { Button } from "./ui/button"
-import { CustomAlertDialog } from "./ui/alert-dialog"
-import { deleteConversation } from "@/hooks/api/delete-conversation"
-import { toast } from "sonner"
-import { useQueryClient } from "@tanstack/react-query"
+import { CustomAlertDialog } from "./custom-ui/custom-alert"
+import { useDeleteConversationMutation } from "@/hooks/api/delete-conversation"
 import { cn } from "@/lib/utils"
 import { authClient } from "@/lib/auth-clients"
 import { Avatar, AvatarFallback } from "./ui/avatar"
@@ -38,9 +36,8 @@ export default function AppSidebar() {
   const { data: session } = authClient.useSession()
 
   const { data } = useGetThreads(0, session?.session?.userId || "")
-  const queryClient = useQueryClient()
   const { state } = useSidebar()
-
+  const deleteConversationMutation = useDeleteConversationMutation()
   if (location.pathname.includes("/auth")) {
     return null
   }
@@ -49,7 +46,7 @@ export default function AppSidebar() {
     <>
       <div
         data-state={state}
-        className={cn("absolute top-1.5 left-1.5 z-50 group")}
+        className={cn("fixed top-1.5 left-1.5 z-50 group")}
       >
         <div className="flex items-center transition-all group-data-[state=collapsed]:delay-300 group-data-[state=expanded]:delay-0 group-data-[state=collapsed]:border rounded-md p-1">
           <SidebarTrigger />
@@ -121,17 +118,16 @@ export default function AppSidebar() {
                             }
                             title="Delete Thread"
                             description={`Are you sure you want to delete "${item.title}"? This action cannot be undone.`}
+                            variant="destructive"
                             onConfirm={async () => {
-                              await deleteConversation(item.threadId)
-                              toast.success("Thread deleted successfully")
+                              await deleteConversationMutation.mutateAsync({
+                                threadId: item.threadId,
+                              })
                               if (item.threadId === params?.id) {
                                 navigate({
                                   to: "/",
                                 })
                               }
-                              queryClient.invalidateQueries({
-                                queryKey: ["threads"],
-                              })
                             }}
                           />
                         </span>
