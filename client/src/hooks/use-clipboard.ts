@@ -1,7 +1,7 @@
 import React from "react"
 import { toast } from "sonner"
 
-export const useClipboard = () => {
+export default function useClipboard() {
   const [copied, setCopied] = React.useState<boolean>(false)
 
   const handleCopy = React.useCallback((message: string) => {
