@@ -59,27 +59,27 @@ export default function SuggestionQueue({
       </h1>
 
       <div className="flex flex-wrap gap-2">
-        {(Object.keys(data || {}) as Category[]).map((category) => {
-          const Icon = categoryIcons[category]
-          const isActive = activeCategory === category
+        {data?.map((question) => {
+          const Icon = categoryIcons[question.category as Category]
+          const isActive = activeCategory === question.category
 
           return (
             <Button
-              key={category}
+              key={question.id}
               variant={isActive ? "default" : "outline"}
               size="default"
-              onClick={() => handleCategoryClick(category)}
+              onClick={() => handleCategoryClick(question.category)}
               className="border"
             >
               <Icon className="size-4" />
-              {category}
+              {question.category}
             </Button>
           )
         })}
       </div>
 
       <div>
-        {data?.[activeCategory].map((question, index) => (
+        {data?.filter((question) => question.category === activeCategory).flatMap((question) => question.questions).map((question, index) => (
           <div
             key={`${activeCategory}-${index}`}
             className={`w-full border-b py-1 transition-all duration-300 ${isAnimating
