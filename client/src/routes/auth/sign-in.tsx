@@ -59,7 +59,7 @@ function RouteComponent() {
         })
       } else {
         toast.success("Login Successful", {
-          description: "Welcome back! Redirecting...",
+          description: "Welcome back!",
           richColors: true,
         })
         setTimeout(() => {
@@ -77,96 +77,93 @@ function RouteComponent() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 w-full">
-      <Card className="w-full sm:max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center text-xl">Sign In</CardTitle>
-          <CardDescription></CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
-            <FieldGroup>
-              <Controller
-                name="email"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="login-email">Email</FieldLabel>
+    <Card className="w-full sm:max-w-md">
+      <CardHeader>
+        <CardTitle className="text-center text-xl">Sign In</CardTitle>
+        <CardDescription></CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup>
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="login-email">Email</FieldLabel>
+                  <Input
+                    {...field}
+                    id="login-email"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    disabled={isLoading}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="login-password">Password</FieldLabel>
+                  <div className="relative">
                     <Input
                       {...field}
-                      id="login-email"
-                      type="email"
+                      id="login-password"
+                      type={showPassword ? "text" : "password"}
                       aria-invalid={fieldState.invalid}
-                      placeholder="you@example.com"
-                      autoComplete="email"
+                      placeholder="Enter your password"
+                      autoComplete="current-password"
                       disabled={isLoading}
+                      className="pr-10"
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="login-password">Password</FieldLabel>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        id="login-password"
-                        type={showPassword ? "text" : "password"}
-                        aria-invalid={fieldState.invalid}
-                        placeholder="Enter your password"
-                        autoComplete="current-password"
-                        disabled={isLoading}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                        disabled={isLoading}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button
-            type="submit"
-            form="login-form"
-            className="w-full"
-            disabled={isLoading}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      disabled={isLoading}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </form>
+      </CardContent>
+      <CardFooter className="flex flex-col gap-4">
+        <Button
+          type="submit"
+          form="login-form"
+          className="w-full"
+          disabled={isLoading}
+        >
+          {isLoading ? "Signing in..." : "Sign In"}
+        </Button>
+        <p className="text-sm text-center text-muted-foreground">
+          Don't have an account?{" "}
+          <Link
+            to="/auth/sign-up"
+            className="text-primary hover:underline font-medium"
           >
-            {isLoading ? "Signing in..." : "Sign In"}
-          </Button>
-          <p className="text-sm text-center text-muted-foreground">
-            Don't have an account?{" "}
-            <Link
-              to="/auth/sign-up"
-              className="text-primary hover:underline font-medium"
-            >
-              Sign Up
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
+            Sign Up
+          </Link>
+        </p>
+      </CardFooter>
+    </Card>
   )
 }
