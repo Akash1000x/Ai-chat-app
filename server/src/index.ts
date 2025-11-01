@@ -18,6 +18,10 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Health check");
+});
+
 app.use("/api", router);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
