@@ -2,23 +2,25 @@ import { ArrowUp, ChevronDown } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
 import { icons } from "./icon"
-import type { Model } from "@/types/models"
+import type { Model, ModelsCategory } from "@/types/models"
 import { Label } from "./ui/label"
 import React from "react"
 import { CustomPopover } from "./ui/popover"
-import { useGetModels } from "@/hooks/api/get-models"
 import useLocalStorage from "@/hooks/use-local-storage"
 
 export default function PromptInput({
   onSubmit,
   message,
   setMessage,
+  models,
+  disabled,
 }: {
   onSubmit: (data: any) => void
   message: string
   setMessage: (message: string) => void
+  models: ModelsCategory[]
+  disabled: boolean
 }) {
-  const { data: models } = useGetModels()
   const [userSelectedModel, setUserSelectedModel] = useLocalStorage(
     "selectedModel",
     null,
@@ -27,7 +29,7 @@ export default function PromptInput({
   const [openPopover, setOpenPopover] = React.useState<boolean>(false)
 
   const handleSubmit = () => {
-    if (!message.trim() || !selectedModel) return
+    if (!message.trim() || !selectedModel || disabled) return
     onSubmit({ message, model: selectedModel })
     setMessage("")
   }
@@ -120,7 +122,7 @@ export default function PromptInput({
             size={"icon"}
             type="submit"
             aria-label="Send message"
-            disabled={!message.trim()}
+            disabled={!message.trim() || disabled}
           >
             <ArrowUp />
           </Button>

@@ -159,12 +159,17 @@ export default function AppSidebar() {
                     </span>
                     <CustomAlertDialog
                       trigger={
-                        <Button variant={"destructive"} size={"icon-sm"}>
+                        <Button
+                          variant={"destructive"}
+                          size={"icon-sm"}
+                          title="Sign Out"
+                        >
                           <LogOut />
                         </Button>
                       }
                       title="Sign Out"
                       description="Are you sure you want to sign out?"
+                      variant={"destructive"}
                       onConfirm={async () => {
                         await authClient.signOut()
                         navigate({

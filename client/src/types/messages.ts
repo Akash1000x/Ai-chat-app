@@ -5,4 +5,5 @@ export type MessageType = {
     type: string;
     text: string;
   }[];
+  model: string;
 }

@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
-import type React from 'react'
+import { cn } from "@/lib/utils"
+import type React from "react"
 
 type SharedProps = {
   as?: React.ElementType
@@ -7,16 +7,16 @@ type SharedProps = {
   children: React.ReactNode
 }
 
-const HeadLine = ({ as: Comp = 'h2', className, ...props }: SharedProps) => {
-  return <Comp className={cn('text-xl font-bold', className)} {...props} />
+const HeadLine = ({ as: Comp = "h2", className, ...props }: SharedProps) => {
+  return <Comp className={cn("text-xl font-bold", className)} {...props} />
 }
 
-const Title = ({ as: Comp = 'p', className, ...props }: SharedProps) => {
-  return <Comp className={cn('text-lg font-medium', className)} {...props} />
+const Title = ({ as: Comp = "p", className, ...props }: SharedProps) => {
+  return <Comp className={cn("text-lg font-medium", className)} {...props} />
 }
 
-const Body = ({ as: Comp = 'p', className, ...props }: SharedProps) => {
-  return <Comp className={cn('lg:text-base text-sm', className)} {...props} />
+const Body = ({ as: Comp = "p", className, ...props }: SharedProps) => {
+  return <Comp className={cn("text-sm", className)} {...props} />
 }
 
 export { Title, Body, HeadLine }

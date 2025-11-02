@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { Skeleton } from "./ui/skeleton"
 import SuggestionQueue from "./ui/suggestion-que"
 import { toast } from "sonner"
+import { useGetModels } from "@/hooks/api/get-models"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -25,6 +26,7 @@ type EventData = {
 
 export default function Chat({ conversationId }: { conversationId?: string }) {
   const { data: queryData, error } = useGetMessage(conversationId)
+  const { data: models } = useGetModels()
   const { copied, handleCopy } = useClipboard()
   const [aiResponse, setAiResponse] = React.useState<string>("")
   const [messages, setMessages] = React.useState<MessageType[]>([])
@@ -85,6 +87,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
         id: "",
         role: "user",
         parts: [{ type: "text", text: promptData.message }],
+        model: promptData.model.slug,
       },
     ])
 
@@ -120,7 +123,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
       while (true) {
         const { done, value } = await reader.read()
         if (done) {
-          console.log("DONE")
+          // console.log("DONE")
           break
         }
         const lines = value.split("\n")
@@ -128,13 +131,13 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
           if (line.startsWith("data: ")) {
             const json = line.replace("data: ", "").trim()
             if (json === "[DONE]") {
-              console.log("DONE")
+              // console.log("DONE")
               break
             }
             try {
               const parsed: EventData = JSON.parse(json)
               if (parsed.type === "finish") {
-                console.log("DONE")
+                // console.log("DONE")
                 break
               }
               fullResponse += parsed.message
@@ -156,6 +159,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
               text: fullResponse,
             },
           ],
+          model: promptData.model.slug,
         },
       ])
       setAiResponse("")
@@ -196,7 +200,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
                     <Body className="p-4 bg-muted rounded-md max-w-xl ml-auto text-justify">
                       {message.parts[0].text}
                     </Body>
-                    <div className="flex justify-end items-center p-2 h-12">
+                    <div className="flex justify-end items-center p-2 h-12 opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible">
                       <CopyToClipboard
                         copied={copied}
                         onClick={() => handleCopy(message.parts[0].text)}
@@ -206,11 +210,22 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
                 ) : (
                   <div className="group leading-8">
                     <Markdown message={message.parts[0].text} />
-                    <div className="flex justify-start items-center p-2 h-12">
+                    <div className="flex justify-start items-center p-2 h-12 gap-2 opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible">
                       <CopyToClipboard
                         copied={copied}
                         onClick={() => handleCopy(message.parts[0].text)}
                       />
+                      <Body className="text-muted-foreground">
+                        {
+                          models
+                            ?.find((category) =>
+                              category.models.find(
+                                (m) => m.slug === message.model,
+                              ),
+                            )
+                            ?.models.find((m) => m.slug === message.model)?.name
+                        }
+                      </Body>
                     </div>
                   </div>
                 )}
@@ -235,6 +250,8 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
         onSubmit={handleSubmit}
         message={message}
         setMessage={setMessage}
+        models={models || []}
+        disabled={!!aiResponse || waitingForAiResponse}
       />
     </div>
   )

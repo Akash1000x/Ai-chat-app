@@ -18,7 +18,7 @@ export default function CopyToClipboard({
       trigger={
         <button
           className={cn(
-            "bg-accent p-2 cursor-pointer rounded-md opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible [&_svg]:size-4",
+            "hover:bg-accent p-2 cursor-pointer rounded-md [&_svg]:size-4",
             className,
           )}
           onClick={onClick}
