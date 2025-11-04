@@ -8,7 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://chat.akashdev.me"],
+    origin: ["http://localhost:3000", "https://nexchat.akashdev.me"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

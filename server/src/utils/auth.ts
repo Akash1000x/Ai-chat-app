@@ -21,7 +21,7 @@ export const auth = betterAuth({
   },
   trustedOrigins: [
     "http://localhost:3000",
-    "https://chat.akashdev.me"
+    "https://nexchat.akashdev.me"
   ],
   basePath: "/api/auth",
   advanced: {
