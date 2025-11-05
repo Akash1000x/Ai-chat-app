@@ -35,7 +35,7 @@ User Preferences:
 
 const SystemPromptToGetTitle = `
   You are a helpful assistant that can give a short title for the user's question.
-  ONLY give the title, no other text. NO COMMENTS, NO CONFIRMATION, NO EXPLANATION, NO THANK YOU, NO NOTHING.
+  ONLY give the title(not add title text in the title), no other text. NO COMMENTS, NO CONFIRMATION, NO EXPLANATION, NO THANK YOU, NO NOTHING.
 `
 
 export const streamData = async (req: Request, res: Response, next: NextFunction) => {
