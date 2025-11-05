@@ -82,6 +82,7 @@ export const threads = pgTable(
     userId: t.text("user_id").references(() => user.id),
     title: t.text("title").default("New conversation"),
     isDeleted: t.boolean("is_deleted").notNull().default(false),
+    shared: t.boolean("shared").notNull().default(false),
 
     ...timestamps,
   },

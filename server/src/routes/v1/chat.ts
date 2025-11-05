@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { streamData } from "@/controllers/chat.js";
-import { getThreads, searchThreads } from "@/controllers/getThreads.js";
+import { getSharedThread, getThreads, searchThreads, shareThread, unshareThread } from "@/controllers/getThreads.js";
 import { getMessages } from "@/controllers/getMessages.js";
 import { getModels } from "@/controllers/getModels.js";
 import { newConversation } from "@/controllers/newConversation.js";
@@ -16,5 +16,8 @@ chatRouter.get("/get-messages", authMiddleware, getMessages);
 chatRouter.post("/new", authMiddleware, newConversation)
 chatRouter.delete("/delete-conversation", authMiddleware, deleteConversation)
 chatRouter.get("/get-models", getModels);
+chatRouter.post("/share-thread", authMiddleware, shareThread);
+chatRouter.post("/unshare-thread", authMiddleware, unshareThread);
+chatRouter.get("/get-shared-thread", getSharedThread);
 
 export default chatRouter;
