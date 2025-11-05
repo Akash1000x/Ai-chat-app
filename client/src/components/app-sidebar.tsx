@@ -126,7 +126,13 @@ export default function AppSidebar() {
                       )}
                       asChild
                     >
-                      <Link to="/chat/$id" params={{ id: item.threadId }}>
+                      <Link
+                        to="/chat/$id"
+                        params={{ id: item.threadId }}
+                        data-shared={item.shared}
+                        data-title={item.title}
+                        data-thread-id={item.threadId}
+                      >
                         <span>{item.title}</span>
                         <span
                           onClick={(e) => {
