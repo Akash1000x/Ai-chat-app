@@ -33,7 +33,7 @@ export default function ShareChat() {
       setShared(isShared)
       setTitle(title)
 
-      if (id && !shared) {
+      if (id && !isShared) {
         shareConversationMutation.mutate({
           threadId: id,
         })
@@ -111,7 +111,11 @@ export default function ShareChat() {
               onClick={handleCopyLink}
               className="flex-1"
             >
-              <Copy className="size-4 mr-2" />
+              {copied ? (
+                <Check className="size-4 mr-2" />
+              ) : (
+                <Copy className="size-4 mr-2" />
+              )}
               Copy Link
             </Button>
           </div>
