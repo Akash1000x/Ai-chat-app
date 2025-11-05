@@ -13,6 +13,7 @@ export const getThreads = async (req: Request, res: Response, next: NextFunction
       return next(new UnauthorizedError({ name: "AuthenticationError", message: "User is not authenticated" }));
     }
 
+    const limit = 28;
     const threadsData = await db
       .select({
         threadId: threads.id,
@@ -22,8 +23,8 @@ export const getThreads = async (req: Request, res: Response, next: NextFunction
       .from(threads)
       .where(and(eq(threads.userId, userId), eq(threads.isDeleted, false)))
       .orderBy(desc(threads.createdAt))
-      .limit(10)
-      .offset(Number(offset) || 0);
+      .limit(limit)
+      .offset((Number(offset) || 0) * limit);
 
     res.status(200).json({ success: true, data: threadsData });
   } catch (error) {
