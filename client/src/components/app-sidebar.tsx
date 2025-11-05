@@ -15,7 +15,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import type { ThreadType } from "@/types/threads"
-import { useGetThreads, useSearchThreads } from "@/hooks/api/get-threads"
+import {
+  useDeleteConversationMutation,
+  useGetThreads,
+  useSearchThreads,
+} from "@/hooks/api/conversations"
 import {
   Link,
   useLocation,
@@ -24,7 +28,6 @@ import {
 } from "@tanstack/react-router"
 import { Button } from "./ui/button"
 import { CustomAlertDialog } from "./custom-ui/custom-alert"
-import { useDeleteConversationMutation } from "@/hooks/api/delete-conversation"
 import { cn } from "@/lib/utils"
 import { authClient } from "@/lib/auth-clients"
 import { Avatar, AvatarFallback } from "./ui/avatar"
@@ -220,7 +223,7 @@ export default function AppSidebar() {
         </SidebarFooter>
       </Sidebar>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent>
+        <DialogContent className="p-3">
           <DialogHeader className="border-b pb-2">
             <SearchInput onSearch={handleSearch} />
             <DialogTitle className="hidden"></DialogTitle>

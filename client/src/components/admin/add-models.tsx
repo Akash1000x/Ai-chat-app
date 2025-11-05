@@ -15,7 +15,7 @@ import ModalDialog from "../custom-ui/custom-dialog"
 import { PlusIcon } from "lucide-react"
 import { useState } from "react"
 import type { ModelsCategory } from "@/types/models"
-import { useAddModelMutation } from "@/hooks/api/admin/add-model"
+import { useAddModelMutation } from "@/hooks/api/admin/models"
 import { toast } from "sonner"
 
 const addModelSchema = z.object({

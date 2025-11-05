@@ -1,20 +1,20 @@
 import Markdown from "@/components/markdown"
 import PromptInput from "@/components/prompt-input"
 import { Body } from "@/components/ui/typography"
-import { useGetMessage } from "@/hooks/api/get-messages"
+import { useGetMessage } from "@/hooks/api/messages"
 import useClipboard from "@/hooks/use-clipboard"
 import type { MessageType } from "@/types/messages"
 import type { Model } from "@/types/models"
 import React, { useEffect } from "react"
 import CopyToClipboard from "./copy-to-clipboard"
-import { startNewConversation } from "@/hooks/api/new-conversation"
 import { authClient } from "@/lib/auth-clients"
 import { useLocation, useNavigate } from "@tanstack/react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import { Skeleton } from "./ui/skeleton"
 import SuggestionQueue from "./ui/suggestion-que"
 import { toast } from "sonner"
-import { useGetModels } from "@/hooks/api/get-models"
+import { useGetModels } from "@/hooks/api/models"
+import { startNewConversation } from "@/hooks/api/conversations"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -215,7 +215,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
                         copied={copied}
                         onClick={() => handleCopy(message.parts[0].text)}
                       />
-                      <Body className="text-muted-foreground">
+                      <Body>
                         {
                           models
                             ?.find((category) =>

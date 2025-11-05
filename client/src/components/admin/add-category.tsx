@@ -7,7 +7,7 @@ import { Button } from "../ui/button"
 import ModalDialog from "../custom-ui/custom-dialog"
 import { PlusIcon } from "lucide-react"
 import { useState } from "react"
-import { useAddModelCategoryMutation } from "@/hooks/api/admin/add-model-category"
+import { useAddModelCategoryMutation } from "@/hooks/api/admin/model-category"
 import { toast } from "sonner"
 
 const addCategorySchema = z.object({
