@@ -59,12 +59,12 @@ export const searchThreads = async (req: Request, res: Response, next: NextFunct
 export const shareThread = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user.id;
-    const { threadId } = req.query;
-    if (!threadId || !userId) {
+    const { conversationId } = req.params;
+    if (!conversationId || !userId) {
       return next(new BadRequestError({ name: "BadRequestError", message: "Required fields are missing" }))
     }
 
-    await db.update(threads).set({ shared: true }).where(and(eq(threads.id, threadId as string), eq(threads.userId, userId)))
+    await db.update(threads).set({ shared: true }).where(and(eq(threads.id, conversationId as string), eq(threads.userId, userId)))
     res.status(200).json({ success: true, message: "Thread shared successfully" })
   } catch (error) {
     console.error("shareThread error", error);
@@ -75,12 +75,12 @@ export const shareThread = async (req: Request, res: Response, next: NextFunctio
 export const unshareThread = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user.id;
-    const { threadId } = req.query;
-    if (!threadId || !userId) {
+    const { conversationId } = req.params;
+    if (!conversationId || !userId) {
       return next(new BadRequestError({ name: "BadRequestError", message: "Required fields are missing" }))
     }
 
-    await db.update(threads).set({ shared: false }).where(and(eq(threads.id, threadId as string), eq(threads.userId, userId)))
+    await db.update(threads).set({ shared: false }).where(and(eq(threads.id, conversationId as string), eq(threads.userId, userId)))
     res.status(200).json({ success: true, message: "Thread unshared successfully" })
   } catch (error) {
     console.error("unshareThread error", error);
@@ -90,13 +90,13 @@ export const unshareThread = async (req: Request, res: Response, next: NextFunct
 
 export const getSharedThread = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { threadId } = req.query;
-    if (!threadId) {
+    const { conversationId } = req.params;
+    if (!conversationId) {
       return next(new BadRequestError({ name: "BadRequestError", message: "Required fields are missing" }))
     }
 
     const threadsData = await db.query.threads.findFirst({
-      where: and(eq(threads.id, threadId as string), eq(threads.shared, true))
+      where: and(eq(threads.id, conversationId as string), eq(threads.shared, true))
     })
     if (!threadsData) {
       return next(new NotFoundError({ name: "NotFoundError", message: "Thread not found" }))

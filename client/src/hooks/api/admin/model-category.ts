@@ -7,7 +7,7 @@ export const useAddModelCategoryMutation = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ categoryName, categorySlug }: { categoryName: string; categorySlug: string }) => {
-      const res = await apiClient.post("/v1/admin/add-model-category", {
+      const res = await apiClient.post("/v1/admin/model-categories", {
         categoryName,
         categorySlug,
       })
@@ -29,7 +29,7 @@ export const useDeleteModelCategoryMutation = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ categoryId }: { categoryId: string }) => {
-      const res = await apiClient.delete(`/v1/admin/delete-model-category/${categoryId}`)
+      const res = await apiClient.delete(`/v1/admin/model-categories/${categoryId}`)
       return res.data
     },
     onSuccess: () => {

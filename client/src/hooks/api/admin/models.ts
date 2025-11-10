@@ -7,7 +7,7 @@ export const useAddModelMutation = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ modelName, modelSlug, categoryId }: { modelName: string; modelSlug: string; categoryId: string }) => {
-      const res = await apiClient.post("/v1/admin/add-model", {
+      const res = await apiClient.post("/v1/admin/models", {
         modelName,
         modelSlug,
         categoryId,
@@ -30,7 +30,7 @@ export const useDeleteModelMutation = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ modelId }: { modelId: string }) => {
-      const res = await apiClient.delete(`/v1/admin/delete-model/${modelId}`)
+      const res = await apiClient.delete(`/v1/admin/models/${modelId}`)
       return res.data
     },
     onSuccess: () => {

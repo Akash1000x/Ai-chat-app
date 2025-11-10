@@ -13,7 +13,7 @@ export const useGetSuggestionQuestions = () => {
   return useQuery<SuggestionQuestion[], Error>({
     queryKey: ["suggestion-questions"],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/v1/get-suggestions-questions`)
+      const { data } = await apiClient.get(`/v1/suggestions-questions`)
       return data.data;
     },
   })

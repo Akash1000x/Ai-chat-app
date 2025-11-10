@@ -6,8 +6,8 @@ import { BadRequestError, InternalRequestError } from "../utils/errors.js";
 
 export const getMessages = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { threadId } = req.query;
-    if (!threadId) {
+    const { conversationId } = req.params;
+    if (!conversationId) {
       return next(new BadRequestError({ name: "BadRequestError", message: "Thread 'id' is required" }));
     }
 
@@ -19,7 +19,7 @@ export const getMessages = async (req: Request, res: Response, next: NextFunctio
         model: messages.model
       })
       .from(messages)
-      .where(eq(messages.threadId, String(threadId)))
+      .where(eq(messages.threadId, String(conversationId)))
       .orderBy(asc(messages.createdAt));
 
     res.status(200).json({ success: true, data: messagesData });

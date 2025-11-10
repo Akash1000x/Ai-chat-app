@@ -10,7 +10,7 @@ export const useGetThreads = (userId: string) => {
   return useInfiniteQuery<ThreadType[], Error>({
     queryKey: ["threads"],
     queryFn: async ({ pageParam = 0 }) => {
-      const { data } = await apiClient.get(`/v1/chat/get-threads?offset=${pageParam}`)
+      const { data } = await apiClient.get(`/v1/chat/threads?offset=${pageParam}`)
       return data.data;
     },
     getNextPageParam: (lastPage, allPages) => {
@@ -28,7 +28,7 @@ export const useSearchThreads = (search: string) => {
   return useQuery<ThreadType[], Error>({
     queryKey: ["threads", search],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/v1/chat/search-threads?search=${search}`)
+      const { data } = await apiClient.get(`/v1/chat/threads/search?search=${search}`)
       return data.data;
     },
     enabled: !!search,
@@ -39,7 +39,7 @@ export const useDeleteConversationMutation = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ threadId }: { threadId: string }) => {
-      const res = await apiClient.delete(`/v1/chat/delete-conversation?threadId=${threadId}`)
+      const res = await apiClient.delete(`/v1/chat/conversation/${threadId}`)
       return res.data
     },
     onSuccess: () => {

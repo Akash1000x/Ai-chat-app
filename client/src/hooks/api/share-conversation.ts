@@ -7,7 +7,7 @@ import { toast } from "sonner"
 export const useShareConversation = () => {
   return useMutation({
     mutationFn: async ({ threadId }: { threadId: string }) => {
-      const res = await apiClient.post(`/v1/chat/share-thread?threadId=${threadId}`)
+      const res = await apiClient.post(`/v1/chat/conversation/${threadId}/share`)
       return res.data
     },
   })
@@ -16,7 +16,7 @@ export const useShareConversation = () => {
 export const useUnshareConversation = () => {
   return useMutation({
     mutationFn: async ({ threadId }: { threadId: string }) => {
-      const res = await apiClient.post(`/v1/chat/unshare-thread?threadId=${threadId}`)
+      const res = await apiClient.post(`/v1/chat/conversation/${threadId}/unshare`)
       return res.data
     },
     onSuccess: () => {
@@ -32,7 +32,7 @@ export const useGetSharedConversation = (threadId: string) => {
   return useQuery<MessageType[], Error>({
     queryKey: ["shared-conversation", threadId],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/v1/chat/get-shared-thread?threadId=${threadId}`)
+      const { data } = await apiClient.get(`/v1/chat/conversation/shared/${threadId}`)
       return data.data
     },
     enabled: !!threadId,

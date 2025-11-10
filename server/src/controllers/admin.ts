@@ -90,36 +90,6 @@ export const deleteModelCategory = async (req: Request, res: Response, next: Nex
   }
 }
 
-export const getModelsWithCategories = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const modelsData = await db.query.modelCategories.findMany({
-      columns: {
-        id: true,
-        name: true,
-        slug: true
-      },
-      with: {
-        models: {
-          columns: {
-            id: true,
-            categoryId: true,
-            isActive: true,
-            isDefault: true,
-            isPremium: true,
-            name: true,
-            slug: true
-          }
-        }
-      }
-    })
-
-    res.status(200).json({ success: true, data: modelsData })
-  } catch (error) {
-    console.error("getModelsWithCategories error", error)
-    return next(new InternalRequestError({ message: "Internal server error", name: "InternalRequestError" }))
-  }
-}
-
 export const updateSuggestionsQuestions = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.body;

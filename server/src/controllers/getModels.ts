@@ -29,7 +29,7 @@ export const getModels = async (req: Request, res: Response, next: NextFunction)
     });
     res.status(200).json({ success: true, data: modelsData })
   } catch (error) {
-    console.error("getMessages error", error)
+    console.error("getModels error", error)
     return next(
       new InternalRequestError({
         message: "Database query failed",

@@ -10,14 +10,15 @@ import { authMiddleware } from "@/utils/authmiddleware.js";
 const chatRouter: Router = Router();
 
 chatRouter.post("/", authMiddleware, streamData);
-chatRouter.get("/get-threads", authMiddleware, getThreads);
-chatRouter.get("/search-threads", authMiddleware, searchThreads);
-chatRouter.get("/get-messages", authMiddleware, getMessages);
+chatRouter.get("/threads", authMiddleware, getThreads);
+chatRouter.get("/threads/search", authMiddleware, searchThreads);
+chatRouter.get("/messages/:conversationId", authMiddleware, getMessages);
 chatRouter.post("/new", authMiddleware, newConversation)
-chatRouter.delete("/delete-conversation", authMiddleware, deleteConversation)
-chatRouter.get("/get-models", getModels);
-chatRouter.post("/share-thread", authMiddleware, shareThread);
-chatRouter.post("/unshare-thread", authMiddleware, unshareThread);
-chatRouter.get("/get-shared-thread", getSharedThread);
+chatRouter.delete("/conversation/:conversationId", authMiddleware, deleteConversation)
+chatRouter.get("/models", getModels);
+
+chatRouter.post("/conversation/:conversationId/share", authMiddleware, shareThread);
+chatRouter.post("/conversation/:conversationId/unshare", authMiddleware, unshareThread);
+chatRouter.get("/conversation/shared/:conversationId", getSharedThread);
 
 export default chatRouter;
