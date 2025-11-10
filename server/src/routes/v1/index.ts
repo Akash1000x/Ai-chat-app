@@ -1,6 +1,6 @@
 import { Router } from "express";
 import chatRouter from "./chat.js";
-import { GetSuggestionsQuestions } from "@/controllers/getSuggestionsQuestions.js";
+import { GetSuggestionsQuestions } from "@/controllers/sugestion-questions.js";
 import adminRouter from "./admin.js";
 
 const router: Router = Router();

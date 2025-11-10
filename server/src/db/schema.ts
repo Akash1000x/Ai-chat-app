@@ -72,8 +72,8 @@ export const verification = pgTable("verification", {
 });
 
 
-export const threads = pgTable(
-  "threads",
+export const conversations = pgTable(
+  "conversations",
   {
     id: t
       .text("id")
@@ -99,7 +99,7 @@ export const messages = pgTable(
       .text("id")
       .primaryKey()
       .default(sql`gen_random_uuid()`),
-    threadId: t.text("thread_id").references(() => threads.id),
+    conversationId: t.text("conversation_id").references(() => conversations.id),
     role: messageRoleEnum(),
     model: t.text(),
     parts: t.json("parts").$type<
@@ -112,7 +112,7 @@ export const messages = pgTable(
     ...timestamps,
   },
   (table) => ({
-    threadIndex: t.index("thread_idx").on(table.threadId),
+    conversationIndex: t.index("conversation_idx").on(table.conversationId),
   })
 );
 

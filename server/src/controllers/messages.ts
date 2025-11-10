@@ -8,7 +8,7 @@ export const getMessages = async (req: Request, res: Response, next: NextFunctio
   try {
     const { conversationId } = req.params;
     if (!conversationId) {
-      return next(new BadRequestError({ name: "BadRequestError", message: "Thread 'id' is required" }));
+      return next(new BadRequestError({ name: "BadRequestError", message: "Conversation 'id' is required" }));
     }
 
     const messagesData = await db
@@ -19,7 +19,7 @@ export const getMessages = async (req: Request, res: Response, next: NextFunctio
         model: messages.model
       })
       .from(messages)
-      .where(eq(messages.threadId, String(conversationId)))
+      .where(eq(messages.conversationId, String(conversationId)))
       .orderBy(asc(messages.createdAt));
 
     res.status(200).json({ success: true, data: messagesData });

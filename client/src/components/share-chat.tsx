@@ -24,7 +24,7 @@ export default function ShareChat() {
   const shareUrl = `${import.meta.env.VITE_APP_URL}/share/${id}`
 
   const handleShareConversation = () => {
-    const element = document.querySelector(`a[data-thread-id="${id}"]`)
+    const element = document.querySelector(`a[data-conversation-id="${id}"]`)
     if (element) {
       const isShared =
         element.getAttribute("data-shared") === "true" ? true : false
@@ -35,7 +35,7 @@ export default function ShareChat() {
 
       if (id && !isShared) {
         shareConversationMutation.mutate({
-          threadId: id,
+          conversationId: id,
         })
         element.setAttribute("data-shared", "true")
         setShared(true)
@@ -46,12 +46,12 @@ export default function ShareChat() {
   const handleUnshareConversation = () => {
     if (id && shared) {
       unshareConversationMutation.mutate({
-        threadId: id,
+        conversationId: id,
       })
       setShared(false)
       setTitle("")
       document
-        .querySelector(`a[data-thread-id="${id}"]`)
+        .querySelector(`a[data-conversation-id="${id}"]`)
         ?.setAttribute("data-shared", "false")
     }
   }

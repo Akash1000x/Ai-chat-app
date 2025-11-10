@@ -6,8 +6,8 @@ import { toast } from "sonner"
 
 export const useShareConversation = () => {
   return useMutation({
-    mutationFn: async ({ threadId }: { threadId: string }) => {
-      const res = await apiClient.post(`/v1/chat/conversation/${threadId}/share`)
+    mutationFn: async ({ conversationId }: { conversationId: string }) => {
+      const res = await apiClient.post(`/v1/chat/conversation/${conversationId}/share`)
       return res.data
     },
   })
@@ -15,8 +15,8 @@ export const useShareConversation = () => {
 
 export const useUnshareConversation = () => {
   return useMutation({
-    mutationFn: async ({ threadId }: { threadId: string }) => {
-      const res = await apiClient.post(`/v1/chat/conversation/${threadId}/unshare`)
+    mutationFn: async ({ conversationId }: { conversationId: string }) => {
+      const res = await apiClient.post(`/v1/chat/conversation/${conversationId}/unshare`)
       return res.data
     },
     onSuccess: () => {
@@ -28,14 +28,14 @@ export const useUnshareConversation = () => {
   })
 }
 
-export const useGetSharedConversation = (threadId: string) => {
+export const useGetSharedConversation = (conversationId: string) => {
   return useQuery<MessageType[], Error>({
-    queryKey: ["shared-conversation", threadId],
+    queryKey: ["shared-conversation", conversationId],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/v1/chat/conversation/shared/${threadId}`)
+      const { data } = await apiClient.get(`/v1/chat/conversation/shared/${conversationId}`)
       return data.data
     },
-    enabled: !!threadId,
+    enabled: !!conversationId,
     retry: false,
   })
 }

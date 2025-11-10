@@ -15,11 +15,11 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
-import type { ThreadType } from "@/types/threads"
+import type { ConversationType } from "@/types/conversations"
 import {
   useDeleteConversationMutation,
-  useGetThreads,
-  useSearchThreads,
+  useGetConversations,
+  useSearchConversations,
 } from "@/hooks/api/conversations"
 import {
   Link,
@@ -50,12 +50,12 @@ export default function AppSidebar() {
   const { data: session } = authClient.useSession()
   const [isOpen, setIsOpen] = useState(false)
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetThreads(session?.session?.userId || "")
+    useGetConversations(session?.session?.userId || "")
   const { state } = useSidebar()
   const deleteConversationMutation = useDeleteConversationMutation()
   const [search, setSearch] = useState("")
-  const { data: searchThreads, isLoading: isLoadingSearchThreads } =
-    useSearchThreads(search)
+  const { data: searchConversations, isLoading: isLoadingSearchConversations } =
+    useSearchConversations(search)
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
   const handleOpen = () => setIsOpen(true)
@@ -65,7 +65,7 @@ export default function AppSidebar() {
     setSearch(search)
   }
 
-  const threads = data?.pages.flatMap((page) => page) || []
+  const conversations = data?.pages.flatMap((page) => page) || []
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -142,24 +142,24 @@ export default function AppSidebar() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            {threads.length > 0 && <SidebarGroupLabel>Chats</SidebarGroupLabel>}
+            {conversations.length > 0 && <SidebarGroupLabel>Chats</SidebarGroupLabel>}
             <SidebarGroupContent>
               <SidebarMenu>
-                {threads.map((item: ThreadType, i: number) => (
+                {conversations.map((item: ConversationType, i: number) => (
                   <SidebarMenuItem key={i}>
                     <SidebarMenuButton
                       className={cn(
                         "text-nowrap relative",
-                        item.threadId === params?.id && "bg-sidebar-accent",
+                        item.conversationId === params?.id && "bg-sidebar-accent",
                       )}
                       asChild
                     >
                       <Link
                         to="/chat/$id"
-                        params={{ id: item.threadId }}
+                        params={{ id: item.conversationId }}
                         data-shared={item.shared}
                         data-title={item.title}
-                        data-thread-id={item.threadId}
+                        data-conversation-id={item.conversationId}
                       >
                         <span>{item.title}</span>
                         <span
@@ -175,14 +175,14 @@ export default function AppSidebar() {
                                 <Trash2 className="size-3" />
                               </Button>
                             }
-                            title="Delete Thread"
+                            title="Delete Conversation"
                             description={`Are you sure you want to delete "${item.title}"? This action cannot be undone.`}
                             variant="destructive"
                             onConfirm={async () => {
                               await deleteConversationMutation.mutateAsync({
-                                threadId: item.threadId,
+                                conversationId: item.conversationId,
                               })
-                              if (item.threadId === params?.id) {
+                              if (item.conversationId === params?.id) {
                                 navigate({
                                   to: "/",
                                 })
@@ -273,21 +273,21 @@ export default function AppSidebar() {
             <DialogDescription className="hidden"></DialogDescription>
           </DialogHeader>
           <div className="max-h-[calc(100vh-15rem)] overflow-y-auto space-y-1">
-            {isLoadingSearchThreads ? (
+            {isLoadingSearchConversations ? (
               <Body className="text-center text-sm text-muted-foreground flex items-center justify-center h-full">
                 <Loader2 className="size-4 animate-spin" />
               </Body>
             ) : search ? (
-              searchThreads && searchThreads?.length > 0 ? (
-                searchThreads?.map((thread: ThreadType) => (
+              searchConversations && searchConversations?.length > 0 ? (
+                searchConversations?.map((conversation: ConversationType) => (
                   <Link
-                    key={thread.threadId}
+                    key={conversation.conversationId}
                     to="/chat/$id"
                     onClick={handleClose}
-                    params={{ id: thread.threadId }}
+                    params={{ id: conversation.conversationId }}
                     className="block px-2 py-1 hover:bg-sidebar-accent rounded-md"
                   >
-                    <Body>{thread.title}</Body>
+                    <Body>{conversation.title}</Body>
                   </Link>
                 ))
               ) : (
@@ -296,15 +296,15 @@ export default function AppSidebar() {
                 </Body>
               )
             ) : (
-              threads.map((thread: ThreadType) => (
+              conversations.map((conversation: ConversationType) => (
                 <Link
-                  key={thread.threadId}
+                  key={conversation.conversationId}
                   to="/chat/$id"
                   onClick={handleClose}
-                  params={{ id: thread.threadId }}
+                  params={{ id: conversation.conversationId }}
                   className="block px-2 py-1 hover:bg-sidebar-accent hover:rounded-md border-b last:border-b-0"
                 >
-                  <Body>{thread.title}</Body>
+                  <Body>{conversation.title}</Body>
                 </Link>
               ))
             )}

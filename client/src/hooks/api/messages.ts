@@ -2,13 +2,13 @@ import { apiClient } from "@/lib/api-client"
 import type { MessageType } from "@/types/messages";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetMessage = (threadId: string | undefined) => {
+export const useGetMessage = (conversationId: string | undefined) => {
   return useQuery<MessageType[], Error>({
-    queryKey: [`messages${threadId}`],
+    queryKey: [`messages${conversationId}`],
     queryFn: async () => {
-      const { data } = await apiClient.get(`/v1/chat/messages/${threadId}`)
+      const { data } = await apiClient.get(`/v1/chat/messages/${conversationId}`)
       return data.data;
     },
-    enabled: !!threadId
+    enabled: !!conversationId
   })
 }

@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { type NextFunction, type Request, type Response } from "express";
-import { messages as messagesTable, models, threads } from "../db/schema.js";
+import { messages as messagesTable, models, conversations } from "../db/schema.js";
 import { db } from "../db/index.js";
 import { BadRequestError, InternalRequestError } from "@/utils/errors.js";
 import { eq } from "drizzle-orm";
@@ -19,7 +19,7 @@ interface RequestBody {
   model: (typeof models.$inferSelect);
   preferences: string;
   messages: (typeof messagesTable.$inferSelect)[];
-  threadId: string;
+  conversationId: string;
   prompt: string;
   newConversation: boolean;
 }
@@ -40,10 +40,10 @@ const SystemPromptToGetTitle = `
 
 export const streamData = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let { model, preferences, messages, threadId, prompt, newConversation }: RequestBody = req.body;
+    let { model, preferences, messages, conversationId, prompt, newConversation }: RequestBody = req.body;
 
-    if (!threadId) {
-      return next(new BadRequestError({ name: "BadRequestError", message: "Thread 'id' is required" }));
+    if (!conversationId) {
+      return next(new BadRequestError({ name: "BadRequestError", message: "Conversation 'id' is required" }));
     }
 
     if (newConversation) {
@@ -55,9 +55,9 @@ export const streamData = async (req: Request, res: Response, next: NextFunction
         ],
         stream: false,
       })
-      await db.update(threads).set({
+      await db.update(conversations).set({
         title: res.choices[0]?.message?.content,
-      }).where(eq(threads.id, threadId));
+      }).where(eq(conversations.id, conversationId));
     }
 
     res.setHeader("Content-Type", "text/event-stream");
@@ -99,13 +99,13 @@ export const streamData = async (req: Request, res: Response, next: NextFunction
     res.end();
 
     await db.insert(messagesTable).values({
-      threadId,
+      conversationId,
       model: model.slug,
       role: "user",
       parts: [{ type: "text", text: messagesData[messagesData.length - 1]?.content ?? "" }],
     });
     await db.insert(messagesTable).values({
-      threadId,
+      conversationId,
       model: model.slug,
       role: "assistant",
       parts: [{ type: "text", text: fullMessage }],

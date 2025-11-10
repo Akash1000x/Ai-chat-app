@@ -78,7 +78,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
       activeConversationId = id
       isNewConversation = true
 
-      queryClient.invalidateQueries({ queryKey: ["threads"] })
+      queryClient.invalidateQueries({ queryKey: ["conversations"] })
     }
 
     setMessages((prev) => [
@@ -92,7 +92,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
     ])
 
     const body = {
-      threadId: activeConversationId,
+      conversationId: activeConversationId,
       messages: messages,
       prompt: promptData.message,
       preferences: "",
@@ -170,7 +170,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
           params: { id: activeConversationId },
           replace: true,
         })
-        queryClient.invalidateQueries({ queryKey: ["threads"] })
+        queryClient.invalidateQueries({ queryKey: ["conversations"] })
       }
     } catch (error: any) {
       console.error(error)
