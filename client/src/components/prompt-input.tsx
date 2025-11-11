@@ -88,36 +88,38 @@ export default function PromptInput({
           onKeyDown={handleKeyDown}
         />
         <div className="flex items-center justify-between p-2">
-          <CustomPopover
-            open={openPopover}
-            setOpen={setOpenPopover}
-            trigger={
-              <Button variant={"ghost"} className="capitalize">
-                {selectedModel?.name} <ChevronDown />
-              </Button>
-            }
-            className="py-2"
-          >
-            <div className="space-y-2">
-              {models?.map((category) => (
-                <div key={category.id} className="">
-                  {!!category.models.length && (
-                    <Label className="text-bold text-xs capitalize mb-1">
-                      {category.name}
-                    </Label>
-                  )}
-                  {category.models.map((model) => (
-                    <ListItem
-                      key={model.id}
-                      model={model}
-                      categoryName={category.slug}
-                      onClick={() => handleSetSelectedModel(model)}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-          </CustomPopover>
+          {models?.length > 1 && (
+            <CustomPopover
+              open={openPopover}
+              setOpen={setOpenPopover}
+              trigger={
+                <Button variant={"ghost"} className="capitalize">
+                  {selectedModel?.name || "Select Model"} <ChevronDown />
+                </Button>
+              }
+              className="py-2"
+            >
+              <div className="space-y-2">
+                {models?.map((category) => (
+                  <div key={category.id} className="">
+                    {!!category.models.length && (
+                      <Label className="text-bold text-xs capitalize mb-1">
+                        {category.name}
+                      </Label>
+                    )}
+                    {category.models.map((model) => (
+                      <ListItem
+                        key={model.id}
+                        model={model}
+                        categoryName={category.slug}
+                        onClick={() => handleSetSelectedModel(model)}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </CustomPopover>
+          )}
           <Button
             size={"icon"}
             type="submit"

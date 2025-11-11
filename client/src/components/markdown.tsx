@@ -34,6 +34,9 @@ export default function Markdown({ message }: { message: string }) {
         p(props) {
           return <p className="my-5 text-justify" {...props} />
         },
+        hr(props) {
+          return <hr className="my-2" {...props} />
+        },
       }}
     />
   )
@@ -43,8 +46,8 @@ export function CodeBlock({
   props,
 }: {
   props: React.ClassAttributes<HTMLElement> &
-  React.HTMLAttributes<HTMLElement> &
-  ExtraProps
+    React.HTMLAttributes<HTMLElement> &
+    ExtraProps
 }) {
   const { copied, handleCopy } = useClipboard()
   const { theme } = useTheme()
