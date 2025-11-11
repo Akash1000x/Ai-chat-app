@@ -95,7 +95,7 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
       conversationId: activeConversationId,
       messages: messages,
       prompt: promptData.message,
-      preferences: "",
+      preferences: localStorage.getItem("customInstructions") || "",
       model: promptData.model,
       newConversation: isNewConversation,
     }
@@ -115,7 +115,10 @@ export default function Chat({ conversationId }: { conversationId?: string }) {
         throw new Error("Stream is not working")
       }
       if (res.status !== 200) {
-        throw new Error(res.statusText)
+        setMessages((prev) => prev.filter((message) => message.id !== ""))
+        throw new Error(
+          (await res.json()).error?.message || "Something went wrong",
+        )
       }
       const reader = res.body.pipeThrough(new TextDecoderStream()).getReader()
 

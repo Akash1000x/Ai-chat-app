@@ -33,7 +33,8 @@ export default function ModalDialog({
     <Dialog open={isOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
-        className={cn("sm:max-w-[450px] [&>button]:hidden", className)}
+        // className={cn("sm:max-w-[450px] [&>button]:hidden", className)}
+        className={cn("sm:max-w-[450px]", className)}
       >
         <DialogHeader>
           <DialogTitle className="border-b w-full pb-2">{title}</DialogTitle>

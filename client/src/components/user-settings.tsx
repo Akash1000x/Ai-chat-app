@@ -13,10 +13,24 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
 import ThemeToggle from "./ui/theme-toggle"
+import ModalDialog from "./custom-ui/custom-dialog"
+import { Textarea } from "./ui/textarea"
+import { Button } from "./ui/button"
+import React from "react"
+import { DialogClose } from "./ui/dialog"
 
 export default function UserSettings() {
   const navigate = useNavigate()
   const { data: session } = authClient.useSession()
+  const [customInstructions, setCustomInstructions] = React.useState<
+    string | null
+  >(localStorage.getItem("customInstructions") || null)
+
+  const handleSaveCustomInstructions = (text: string) => {
+    localStorage.setItem("customInstructions", text)
+    setCustomInstructions(text)
+  }
+
   return (
     <div>
       {session?.session ? (
@@ -32,19 +46,48 @@ export default function UserSettings() {
                     {session?.user?.name?.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="truncate text-lg">
-                  {session?.user?.name}
-                </span>
+                <span className="truncate text-lg">{session?.user?.name}</span>
               </div>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="start">
             <DropdownMenuLabel>
-              <span className="truncate text-lg">
-                {session?.user?.name}
-              </span></DropdownMenuLabel>
+              <span className="truncate text-lg">{session?.user?.name}</span>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <div className="px-2 py-2">
+            <ModalDialog
+              title="Custom Instructions"
+              trigger={
+                <Button
+                  variant={"ghost"}
+                  className="px-2 py-1.5 justify-start w-full"
+                >
+                  Custom Instructions
+                </Button>
+              }
+              footer={
+                <DialogClose asChild>
+                  <Button
+                    onClick={() =>
+                      handleSaveCustomInstructions(customInstructions || "")
+                    }
+                    disabled={!customInstructions}
+                  >
+                    Save
+                  </Button>
+                </DialogClose>
+              }
+            >
+              <div>
+                <Textarea
+                  placeholder="Enter your custom instructions"
+                  value={customInstructions || ""}
+                  onChange={(e) => setCustomInstructions(e.target.value)}
+                />
+              </div>
+            </ModalDialog>
+            <DropdownMenuSeparator />
+            <div className="px-2 py-1">
               <ThemeToggle />
             </div>
             <DropdownMenuSeparator />
