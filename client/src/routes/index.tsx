@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 
 function App() {
   return (
-    <div className="w-full px-2 relative">
+    <div className="w-full relative">
       <Chat />
     </div>
   )
