@@ -142,15 +142,18 @@ export default function AppSidebar() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            {conversations.length > 0 && <SidebarGroupLabel>Chats</SidebarGroupLabel>}
+            {conversations.length > 0 && (
+              <SidebarGroupLabel>Chats</SidebarGroupLabel>
+            )}
             <SidebarGroupContent>
               <SidebarMenu>
                 {conversations.map((item: ConversationType, i: number) => (
                   <SidebarMenuItem key={i}>
                     <SidebarMenuButton
                       className={cn(
-                        "text-nowrap relative",
-                        item.conversationId === params?.id && "bg-sidebar-accent",
+                        "relative overflow-hidden group/menu-item",
+                        item.conversationId === params?.id &&
+                          "bg-sidebar-accent",
                       )}
                       asChild
                     >
@@ -160,14 +163,21 @@ export default function AppSidebar() {
                         data-shared={item.shared}
                         data-title={item.title}
                         data-conversation-id={item.conversationId}
+                        className="flex items-center relative w-full"
                       >
-                        <span>{item.title}</span>
+                        <span className="truncate flex-1 min-w-0 pr-8 block relative z-0">
+                          {item.title}
+                        </span>
                         <span
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
                           }}
-                          className="w-20 z-50 flex justify-end absolute -right-20 bg-gradient-to-r from-black/0 to-accent opacity-0 group-hover/menu-item:opacity-100 group-hover/menu-item:-right-0 transition-all duration-200"
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                          }}
+                          className="absolute right-0 top-0 h-full w-8 flex items-center justify-center z-10 opacity-0 pointer-events-none group-hover/menu-item:opacity-100 group-hover/menu-item:pointer-events-auto transition-opacity duration-200"
                         >
                           <CustomAlertDialog
                             trigger={
