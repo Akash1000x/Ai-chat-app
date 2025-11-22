@@ -8,7 +8,7 @@ import React from "react"
 import { CustomPopover } from "./ui/popover"
 import useLocalStorage from "@/hooks/use-local-storage"
 
-export default function PromptInput({
+function PromptInput({
   onSubmit,
   message,
   setMessage,
@@ -133,6 +133,8 @@ export default function PromptInput({
     </div>
   )
 }
+
+export default React.memo(PromptInput)
 
 const ListItem = React.memo(
   ({

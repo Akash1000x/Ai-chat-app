@@ -11,8 +11,9 @@ import useClipboard from "@/hooks/use-clipboard"
 import { Label } from "./ui/label"
 import { useTheme } from "./theme-provider"
 import CopyToClipboard from "./copy-to-clipboard"
+import React from "react"
 
-export default function Markdown({ message }: { message: string }) {
+function Markdown({ message }: { message: string }) {
   return (
     <ReactMarkdown
       children={message}
@@ -41,6 +42,8 @@ export default function Markdown({ message }: { message: string }) {
     />
   )
 }
+
+export default React.memo(Markdown)
 
 export function CodeBlock({
   props,
